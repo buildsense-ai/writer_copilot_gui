@@ -1,4 +1,12 @@
-const { app, BrowserWindow, clipboard, ipcMain, screen, dialog } = require("electron")
+const {
+  app,
+  BrowserWindow,
+  clipboard,
+  ipcMain,
+  screen,
+  dialog,
+  systemPreferences,
+} = require("electron")
 const path = require("path")
 const fs = require("fs")
 const { execFile, spawn } = require("child_process")
@@ -116,6 +124,7 @@ const createOverlayWindow = () => {
   })
 
   overlayWindow.setAlwaysOnTop(true, "screen-saver")
+  overlayWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   overlayWindow.loadFile(path.join(__dirname, "overlay.html"))
 }
 
@@ -283,6 +292,32 @@ const startCapture = () => {
   uIOhook.start()
 }
 
+const ensureAccessibilityPermissions = () => {
+  if (process.platform !== "darwin") {
+    return
+  }
+  const trusted = systemPreferences.isTrustedAccessibilityClient(true)
+  if (trusted) {
+    return
+  }
+  dialog.showMessageBox({
+    type: "warning",
+    title: "需要辅助功能权限",
+    message: "请在“系统设置 > 隐私与安全 > 辅助功能”允许本应用，以启用全局划词。",
+  })
+}
+
+const remindWindowsAdminPermission = () => {
+  if (process.platform !== "win32") {
+    return
+  }
+  dialog.showMessageBox({
+    type: "info",
+    title: "需要管理员权限",
+    message: "为启用全局划词功能，请以管理员权限运行本应用。",
+  })
+}
+
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1200,
@@ -302,6 +337,8 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
   startBackend()
+  ensureAccessibilityPermissions()
+  remindWindowsAdminPermission()
   createOverlayWindow()
   createDropzoneWindow()
   startCapture()
