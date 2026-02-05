@@ -1,0 +1,19 @@
+{
+  "id": "todo",
+  "name": "Todo 任务管理",
+  "version": "1.0.0",
+  "description": "帮助用户管理待办事项，包括添加、查看、完成和删除任务",
+  "tools": [
+    "database_operation",
+    "search"
+  ],
+  "enabled": true,
+  "metadata": {
+    "author": "System",
+    "tags": [
+      "task",
+      "todo",
+      "productivity"
+    ]
+  }
+}

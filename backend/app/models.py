@@ -29,6 +29,29 @@ class Project(Base):
     status = Column(String(20), default="active", index=True)
 
 
+class File(Base):
+    """上传的文件记录"""
+    __tablename__ = "files"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    project_id = Column(String(36), ForeignKey("projects.id"), nullable=False, index=True)
+
+    file_name = Column(String(255), nullable=False)
+    file_path = Column(String(500))  # 原始文件路径
+    file_url = Column(String(500))  # 文件URL (MinIO/HTTP)
+    file_type = Column(String(50))  # pdf, md, txt
+    file_size = Column(Integer)  # 字节
+
+    # MinerU 解析相关
+    mineru_task_id = Column(String(100))
+    parse_status = Column(String(50), default="pending")  # pending, processing, completed, failed
+    markdown_path = Column(String(500))  # 解析后的 Markdown 路径
+    chunks_count = Column(Integer, default=0)  # 向量化的块数量
+
+    created_at = Column(DateTime, default=beijing_now, index=True)
+    parsed_at = Column(DateTime)
+
+
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
 

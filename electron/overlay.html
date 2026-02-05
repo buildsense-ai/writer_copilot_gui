@@ -1,115 +1,150 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Mem Overlay</title>
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        background: transparent;
-        font-family: "Inter", "SF Pro Text", system-ui, sans-serif;
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Mem Overlay</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: "Inter", "SF Pro Text", system-ui, sans-serif;
+    }
+
+    .container {
+      width: 56px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .button {
+      width: 56px;
+      height: 26px;
+      border-radius: 13px;
+      border: none;
+      cursor: pointer;
+      background: #6d28d9;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 16px rgba(109, 40, 217, 0.25);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .button.saved {
+      background: #22c55e;
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+      transform: scale(1.05);
+    }
+
+    .button.loading {
+      background: #8b5cf6;
+      box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+    }
+
+    .spinner {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: white;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .check {
+      width: 10px;
+      height: 7px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: rotate(-45deg);
+      margin-top: -2px;
+      opacity: 0;
+      animation: checkmark 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+
+    @keyframes checkmark {
+      0% {
+        opacity: 0;
+        transform: rotate(-45deg) scale(0.3);
       }
 
-      .container {
-        width: 56px;
-        height: 26px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      50% {
+        opacity: 1;
+        transform: rotate(-45deg) scale(1.1);
       }
 
-      .button {
-        width: 56px;
-        height: 26px;
-        border-radius: 13px;
-        border: none;
-        cursor: pointer;
-        background: #6d28d9;
-        color: white;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        box-shadow: 0 6px 16px rgba(109, 40, 217, 0.25);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
+      100% {
+        opacity: 1;
+        transform: rotate(-45deg) scale(1);
+      }
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
       }
 
-      .button.saved {
-        background: #22c55e;
+      to {
+        transform: rotate(360deg);
       }
+    }
+  </style>
+</head>
 
-      .button.loading {
-        background: #8b5cf6;
+<body>
+  <div class="container">
+    <button class="button" id="mem-btn">Mem</button>
+  </div>
+  <script>
+    const button = document.getElementById("mem-btn")
+    const setContent = (state) => {
+      button.classList.remove("loading", "saved")
+      if (state === "loading") {
+        button.classList.add("loading")
+        button.innerHTML = '<span class="spinner"></span>'
+        return
       }
+      if (state === "saved") {
+        button.classList.add("saved")
+        button.innerHTML = '<span class="check"></span>'
+        return
+      }
+      if (state === "fail") {
+        button.innerHTML = "Fail"
+        return
+      }
+      button.innerHTML = "Mem"
+    }
 
-      .spinner {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.35);
-        border-top-color: white;
-        animation: spin 0.9s linear infinite;
+    document.addEventListener("mousedown", (event) => {
+      if (event.target === button) {
+        return
       }
+      window.overlayApi.hide()
+    })
 
-      .check {
-        width: 10px;
-        height: 7px;
-        border-left: 2px solid white;
-        border-bottom: 2px solid white;
-        transform: rotate(-45deg);
-        margin-top: -2px;
-      }
-
-      @keyframes spin {
-        from {
-          transform: rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <button class="button" id="mem-btn">Mem</button>
-    </div>
-    <script>
-      const button = document.getElementById("mem-btn")
-      const setContent = (state) => {
-        button.classList.remove("loading", "saved")
-        if (state === "loading") {
-          button.classList.add("loading")
-          button.innerHTML = '<span class="spinner"></span>'
-          return
-        }
-        if (state === "saved") {
-          button.classList.add("saved")
-          button.innerHTML = '<span class="check"></span>'
-          return
-        }
-        if (state === "fail") {
-          button.innerHTML = "Fail"
-          return
-        }
-        button.innerHTML = "Mem"
-      }
-
-      button.addEventListener("click", async () => {
-        button.disabled = true
-        setContent("loading")
+    button.addEventListener("click", async () => {
+      button.disabled = true
+      setContent("loading")
+      try {
         const result = await window.overlayApi.save()
-        if (result && result.ok) {
+        console.log('[Overlay] Save result:', result)
+        if (result && result.success) {
           setContent("saved")
           setTimeout(() => {
             window.overlayApi.hide()
             setContent("idle")
             button.disabled = false
-          }, 1000)
+          }, 2000)
         } else {
           setContent("fail")
           setTimeout(() => {
@@ -117,7 +152,16 @@
             button.disabled = false
           }, 900)
         }
-      })
-    </script>
-  </body>
+      } catch (error) {
+        console.error('[Overlay] Save error:', error)
+        setContent("fail")
+        setTimeout(() => {
+          setContent("idle")
+          button.disabled = false
+        }, 900)
+      }
+    })
+  </script>
+</body>
+
 </html>

@@ -1,0 +1,21 @@
+{
+  "id": "file_ops",
+  "name": "文件操作",
+  "version": "1.0.0",
+  "description": "文件读写、编辑和浏览工具",
+  "tools": [
+    "read_file",
+    "apply_edit",
+    "write_file",
+    "list_files"
+  ],
+  "enabled": true,
+  "metadata": {
+    "author": "System",
+    "tags": [
+      "file",
+      "edit",
+      "io"
+    ]
+  }
+}

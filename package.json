@@ -9,14 +9,17 @@
     "dev:electron": "wait-on tcp:5173 && electron .",
     "build": "npm --prefix frontend run build",
     "start": "electron .",
-    "postinstall": "electron-rebuild -f -w uiohook-napi"
+    "postinstall": "electron-rebuild -f -w uiohook-napi -w node-pty"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "electron": "^37.4.0",
+    "chokidar": "^4.0.3",
+    "dotenv": "^16.6.1",
+    "electron": "^40.0.0",
     "minio": "^8.0.6",
+    "node-pty": "^1.1.0",
     "uiohook-napi": "^1.5.4"
   },
   "devDependencies": {

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_backend"
+
+[project]
+name = "paper-cli"
+version = "0.1.0"
+description = "CLI-based AI assistant for academic paper writing"
+requires-python = ">=3.9"
+dependencies = [
+    "typer[all]>=0.9.0",
+    "rich>=13.7.0",
+    "openai==1.63.0",
+    "chromadb==0.5.23",
+    "python-dotenv==1.0.1",
+]
+
+[project.scripts]
+paper = "src.main:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]

@@ -46,3 +46,33 @@ venv/
 .idea/
 
 .claude/
+
+# Frontend build
+frontend/dist/
+frontend/build/
+
+# Electron
+out/
+release/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# ChromaDB
+chromadb/
+**/chromadb/
+
+# User data
+~/Documents/PaperMem/
+
+# Backup files
+*.old.*
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
